@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>จับคู่คำศัพท์หรรษา</title>
+<meta name="description" content="เกมจับคู่คำศัพท์สำหรับเด็ก ป.2 เล่นคนเดียว แข่งกับเพื่อนในเครื่องเดียว หรือเปิดห้องออนไลน์เล่นพร้อมกันคนละเครื่อง">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&family=Noto+Sans+Thai+Looped:wght@400;600;700&display=swap">
+<style>
+:root{
+  --ground:#eef2ff; --ground-dot:rgba(61,123,255,.13);
+  --paper:#ffffff; --paper-2:#f5f7ff;
+  --ink:#2a1f5c; --ink-2:#6b6396; --line:rgba(42,31,92,.13);
+  --candy:#ff4f87; --sun:#f59f00; --mint:#0ca678; --sky:#3d7bff; --grape:#8b5cf6;
+  --shadow:0 6px 0 rgba(42,31,92,.13);
+  --shadow-soft:0 10px 26px rgba(42,31,92,.12);
+  color-scheme:light;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --ground:#191338; --ground-dot:rgba(139,92,246,.20);
+  --paper:#261e52; --paper-2:#2f2663;
+  --ink:#f6f2ff; --ink-2:#b7acdf; --line:rgba(246,242,255,.18);
+  --candy:#ff7aa6; --sun:#ffc14d; --mint:#3ddcac; --sky:#76a3ff; --grape:#b492ff;
+  --shadow:0 6px 0 rgba(0,0,0,.35); --shadow-soft:0 10px 26px rgba(0,0,0,.35);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ground:#191338; --ground-dot:rgba(139,92,246,.20);
+  --paper:#261e52; --paper-2:#2f2663;
+  --ink:#f6f2ff; --ink-2:#b7acdf; --line:rgba(246,242,255,.18);
+  --candy:#ff7aa6; --sun:#ffc14d; --mint:#3ddcac; --sky:#76a3ff; --grape:#b492ff;
+  --shadow:0 6px 0 rgba(0,0,0,.35); --shadow-soft:0 10px 26px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+img{max-width:100%}
+[hidden]{display:none !important}
+body{
+  margin:0; background-color:var(--ground);
+  background-image:radial-gradient(var(--ground-dot) 2px, transparent 2px);
+  background-size:26px 26px; color:var(--ink);
+  font-family:'Noto Sans Thai Looped','Anuphan',system-ui,-apple-system,sans-serif;
+  font-size:16px; line-height:1.55; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:780px;margin:0 auto;padding-inline:16px;padding-block:18px 44px}
+
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.mark{width:52px;height:52px;flex:none;border-radius:16px;
+  background:linear-gradient(145deg,var(--candy),var(--sun));
+  display:grid;place-items:center;font-size:27px;box-shadow:var(--shadow);transform:rotate(-4deg)}
+h1{font-family:'Mali','Noto Sans Thai Looped',cursive;font-size:clamp(24px,5.6vw,33px);
+  font-weight:700;margin:0;line-height:1.15;text-wrap:balance}
+h1 span{color:var(--candy)}
+.sub{margin:2px 0 0;color:var(--ink-2);font-size:14px}
+
+.panel{background:var(--paper);border:2px solid var(--line);border-radius:20px;
+  padding:16px;margin-bottom:14px;box-shadow:var(--shadow-soft)}
+.panel h2{font-family:'Mali',cursive;font-size:17px;margin:0 0 10px;font-weight:700;
+  display:flex;align-items:center;gap:8px}
+.panel h2 i{font-style:normal;width:25px;height:25px;border-radius:9px;background:var(--ink);
+  color:var(--paper);display:grid;place-items:center;font-size:13px;flex:none}
+.note{margin:9px 0 0;font-size:13px;color:var(--ink-2);line-height:1.5}
+
+.pickrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px}
+.pick{font-family:'Mali',cursive;font-weight:600;font-size:15px;text-align:left;
+  border:2px solid var(--line);background:var(--paper-2);color:var(--ink);
+  padding:12px 14px;border-radius:16px;cursor:pointer;min-height:62px;
+  display:flex;align-items:center;gap:10px;transition:transform .12s ease,border-color .15s,background .15s}
+.pick:hover{transform:translateY(-2px)}
+.pick .big{font-size:24px;line-height:1;flex:none}
+.pick .t{display:flex;flex-direction:column;min-width:0}
+.pick .t b{font-weight:700;line-height:1.25}
+.pick .t small{font-size:11.5px;color:var(--ink-2);font-family:'Noto Sans Thai Looped',sans-serif;line-height:1.35}
+.pick[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.pick[aria-pressed="true"] .t small{color:rgba(255,255,255,.72)}
+
+.stages{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:9px}
+.stage{font-family:'Mali',cursive;border:2px solid var(--line);background:var(--paper-2);
+  color:var(--ink);border-radius:16px;padding:10px 8px;cursor:pointer;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:1px;min-height:92px;justify-content:center;
+  transition:transform .12s ease}
+.stage:hover:not(:disabled){transform:translateY(-2px)}
+.stage .ico{font-size:22px;line-height:1.1}
+.stage .no{font-size:12.5px;color:var(--ink-2);font-family:'Noto Sans Thai Looped',sans-serif}
+.stage .nm{font-weight:700;font-size:13.5px;line-height:1.2}
+.stage .st{font-size:11px;letter-spacing:1px;color:var(--sun)}
+.stage[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.stage[aria-pressed="true"] .no{color:rgba(255,255,255,.7)}
+.stage:disabled{opacity:.42;cursor:not-allowed}
+
+.pl-count{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.num{font-family:'Mali',cursive;font-weight:700;font-size:15px;min-width:72px;min-height:46px;
+  border-radius:14px;border:2px solid var(--line);background:var(--paper-2);color:var(--ink);cursor:pointer}
+.num[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.names{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.field{display:flex;align-items:center;gap:8px;background:var(--paper-2);border:2px solid var(--line);
+  border-radius:14px;padding:6px 10px}
+.field .dot{width:14px;height:14px;border-radius:50%;flex:none}
+.field input{border:none;background:none;color:var(--ink);font:inherit;font-size:15px;
+  width:100%;min-width:0;padding:8px 0;outline:none}
+.field input:focus-visible{outline:2px solid var(--sky);outline-offset:3px;border-radius:6px}
+
+.online-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:4px}
+.obox{border:2px dashed var(--line);border-radius:16px;padding:13px;background:var(--paper-2)}
+.obox h3{font-family:'Mali',cursive;font-size:15px;margin:0 0 9px;font-weight:700}
+.codein{font-family:'Mali',cursive;font-weight:700;font-size:26px;letter-spacing:.18em;
+  width:100%;text-align:center;border:2px solid var(--line);background:var(--paper);
+  color:var(--ink);border-radius:14px;padding:9px 10px;outline:none;margin-bottom:9px}
+.codein:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+
+.btn{font-family:'Mali',cursive;font-weight:600;font-size:15px;border:none;border-radius:14px;
+  padding:11px 17px;min-height:46px;cursor:pointer;background:var(--ink);color:var(--paper);
+  box-shadow:var(--shadow);display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  transition:transform .12s ease,filter .15s ease}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(42,31,92,.2)}
+.btn.ghost{background:var(--paper);color:var(--ink);border:2px solid var(--line)}
+.btn.pink{background:var(--candy);color:#fff}
+.btn.mint{background:var(--mint);color:#fff}
+.btn.big{font-size:19px;min-height:60px;width:100%;border-radius:18px}
+.btn.wide{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+.topbar{display:flex;align-items:center;gap:9px;margin-bottom:12px;flex-wrap:wrap}
+.crumb{font-family:'Mali',cursive;font-weight:700;font-size:16px}
+.tagline{font-size:11.5px;background:var(--paper);border:2px solid var(--line);
+  border-radius:999px;padding:3px 10px;color:var(--ink-2)}
+.grow{flex:1 1 auto}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--paper);
+  border:2px solid var(--line);border-radius:18px;padding:10px;margin-bottom:12px;box-shadow:var(--shadow-soft)}
+.stat{text-align:center;display:flex;flex-direction:column;gap:1px;min-width:0}
+.stat b{font-family:'Mali',cursive;font-size:clamp(17px,4.4vw,22px);font-weight:700;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.stat small{font-size:11px;color:var(--ink-2);white-space:nowrap}
+.stat:nth-child(1) b{color:var(--candy)} .stat:nth-child(2) b{color:var(--sky)}
+.stat:nth-child(3) b{color:var(--grape)} .stat:nth-child(4) b{color:var(--mint)}
+
+.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(124px,1fr));gap:8px;margin-bottom:12px}
+.pchip{background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:9px 10px;
+  display:flex;align-items:center;gap:9px;transition:transform .15s ease,border-color .15s;min-width:0}
+.pchip .av{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;
+  color:#fff;font-family:'Mali',cursive;font-weight:700;font-size:15px}
+.pchip .pn{font-size:13px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.pchip .ps{font-family:'Mali',cursive;font-weight:700;font-size:17px;line-height:1.1;
+  font-variant-numeric:tabular-nums}
+.pchip.on{border-color:var(--c);transform:translateY(-3px);box-shadow:0 6px 0 var(--c)}
+.pchip .turn{color:var(--c);font-weight:700;font-size:11.5px}
+.pchip .you{font-size:10.5px;background:var(--ink);color:var(--paper);border-radius:999px;padding:0 6px;margin-left:4px}
+
+.say{margin-bottom:12px}
+.bubble{background:var(--paper);border:2px dashed var(--line);border-radius:14px;
+  padding:9px 13px;font-family:'Mali',cursive;color:var(--ink);font-size:15px;display:block}
+.bubble.warn{border-style:solid;border-color:var(--sun);background:rgba(245,159,0,.12)}
+
+.board{display:grid;grid-template-columns:repeat(var(--cols,4),1fr);gap:clamp(7px,2vw,12px);
+  perspective:1100px;margin-bottom:14px}
+@media (max-width:560px){.board{grid-template-columns:repeat(4,1fr)}}
+.card{position:relative;aspect-ratio:1/1.3;border:none;background:none;padding:0;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .45s cubic-bezier(.3,1.4,.5,1);
+  border-radius:16px;max-width:100%}
+.card:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.card.up,.card.done{transform:rotateY(180deg)}
+.board.wait .card{cursor:not-allowed}
+.face{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;
+  overflow:hidden;box-shadow:var(--shadow)}
+.back{background:linear-gradient(150deg,var(--c1),var(--c2));color:#fff}
+.back .stars{font-size:clamp(10px,2.6vw,13px);letter-spacing:1px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
+.back .glyph{font-size:clamp(21px,6vw,32px);opacity:.95}
+.back::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 22% 18%,rgba(255,255,255,.4) 0 18%,transparent 19%),
+             radial-gradient(circle at 78% 80%,rgba(255,255,255,.28) 0 14%,transparent 15%);
+  pointer-events:none}
+.front{transform:rotateY(180deg);background:var(--paper);border:3px solid var(--c1);color:var(--ink)}
+.front.pic{justify-content:center;gap:1px;padding:4px}
+.front .emoji{font-size:clamp(33px,10vw,56px);line-height:1.05;
+  filter:drop-shadow(0 3px 5px rgba(42,31,92,.22))}
+.front .cap{font-weight:700;font-size:clamp(11px,3vw,16px);line-height:1.15;text-align:center;
+  color:var(--ink);word-break:break-word;padding-inline:2px}
+.front .cap::before{content:"";display:block;width:26px;height:2px;border-radius:2px;
+  background:var(--c1);opacity:.5;margin:3px auto}
+.front .cap.en{font-family:'Mali',cursive;color:var(--grape)}
+.front .cap2{font-family:'Mali',cursive;font-weight:600;font-size:clamp(9px,2.5vw,13px);
+  line-height:1.15;text-align:center;color:var(--grape);word-break:break-word;padding-inline:2px}
+.front.txt{background:linear-gradient(165deg,var(--paper) 40%,var(--tint));gap:5px}
+.front .word{font-weight:700;font-size:clamp(13px,3.7vw,21px);line-height:1.2;text-align:center;
+  word-break:break-word;hyphens:auto;padding-inline:3px}
+.front .word.en{font-family:'Mali',cursive;color:var(--grape)}
+.front .lang{font-size:10px;letter-spacing:.06em;color:var(--ink-2);background:var(--paper);
+  border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.card.done{cursor:default}
+.card.done .front{border-color:var(--mint);background:var(--paper-2)}
+.card.done .front::after{content:"✓";position:absolute;top:4px;right:6px;color:var(--mint);
+  font-size:14px;font-weight:700}
+.card.pop{animation:pop .45s ease}
+.card.shake .front{animation:shake .4s ease}
+@keyframes pop{0%{scale:1}45%{scale:1.11}100%{scale:1}}
+@keyframes shake{0%,100%{translate:0}25%{translate:-5px}75%{translate:5px}}
+
+.legend ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.legend li{display:flex;gap:9px;align-items:flex-start;font-size:14px;line-height:1.45}
+.pill{flex:none;font-size:11px;font-weight:700;color:#fff;border-radius:999px;padding:3px 9px;
+  margin-top:2px;white-space:nowrap;font-family:'Mali',cursive}
+
+/* ห้องรอ */
+.bigcode{font-family:'Mali',cursive;font-weight:700;font-size:clamp(46px,14vw,74px);
+  letter-spacing:.14em;text-align:center;color:var(--candy);line-height:1.1;margin:2px 0 4px}
+.lobby-players{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:10px 0}
+.lp{display:flex;align-items:center;gap:9px;background:var(--paper-2);border:2px solid var(--line);
+  border-radius:14px;padding:9px 11px}
+.lp .av{width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;
+  color:#fff;font-family:'Mali',cursive;font-weight:700;font-size:14px}
+.lp b{font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.linkrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.linkrow input{flex:1 1 200px;min-width:0;border:2px solid var(--line);background:var(--paper-2);
+  color:var(--ink-2);border-radius:12px;padding:10px;font:inherit;font-size:13px;outline:none}
+.dots::after{content:"";animation:dots 1.4s steps(4,end) infinite}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+
+.overlay{position:fixed;inset:0;background:rgba(26,18,60,.62);backdrop-filter:blur(3px);
+  display:grid;place-items:center;padding:20px;z-index:20;overflow:auto}
+.modal{position:relative;background:var(--paper);border-radius:26px;padding:24px 20px;
+  max-width:400px;width:100%;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.3);
+  border:3px solid var(--sun)}
+.modal h2{font-family:'Mali',cursive;font-size:26px;margin:6px 0 2px}
+.modal p{margin:0 0 12px;color:var(--ink-2);font-size:14px}
+.bigstars{font-size:36px;letter-spacing:4px;line-height:1.1}
+.scorebox{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 16px;
+  background:var(--paper-2);border-radius:16px;padding:12px 8px}
+.scorebox b{display:block;font-family:'Mali',cursive;font-size:20px;font-variant-numeric:tabular-nums}
+.scorebox small{font-size:11px;color:var(--ink-2)}
+.podium{display:grid;gap:8px;margin:14px 0 16px;text-align:left}
+.prow{display:flex;align-items:center;gap:10px;background:var(--paper-2);border-radius:14px;
+  padding:9px 12px;border:2px solid transparent}
+.prow.win{border-color:var(--sun);background:linear-gradient(120deg,var(--paper-2),rgba(245,159,0,.18))}
+.prow .md{font-size:21px;width:26px;flex:none;text-align:center}
+.prow .pn2{flex:1 1 auto;font-weight:700;font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.prow .sc{font-family:'Mali',cursive;font-weight:700;font-size:19px;font-variant-numeric:tabular-nums}
+.modal .row{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.best{margin-top:12px;font-size:13px;color:var(--mint);font-weight:700}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:21}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));
+  background:var(--ink);color:var(--paper);padding:11px 17px;border-radius:14px;z-index:30;
+  font-family:'Mali',cursive;font-size:15px;box-shadow:0 8px 22px rgba(0,0,0,.28);max-width:90vw;text-align:center}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div class="mark" aria-hidden="true">🧩</div>
+    <div>
+      <h1>จับคู่คำศัพท์<span>หรรษา</span></h1>
+      <p class="sub">เกมคำศัพท์ 10 ด่าน สำหรับน้อง ๆ ป.2 · เล่นคนเดียว หรือเปิดห้องแข่งกับเพื่อนคนละเครื่อง</p>
+    </div>
+  </header>
+
+  <!-- ========== หน้าแรก ========== -->
+  <div id="home">
+    <section class="panel">
+      <h2><i>1</i> เลือกคำศัพท์ที่จะฝึก</h2>
+      <div class="pickrow" id="langs"></div>
+      <p class="note" id="langNote"></p>
+    </section>
+
+    <section class="panel">
+      <h2><i>2</i> เล่นแบบไหน</h2>
+      <div class="pickrow" id="modes"></div>
+
+      <div id="partyBox" hidden style="margin-top:12px">
+        <div class="pl-count" id="plCount" role="group" aria-label="จำนวนผู้เล่น"></div>
+        <div class="names" id="plNames"></div>
+        <p class="note">ผลัดกันเปิดการ์ดบนเครื่องเดียวกัน · <b>ใครเปิดถูกได้เล่นต่อ</b> เปิดผิดเปลี่ยนตา</p>
+      </div>
+
+      <div id="onlineBox" hidden style="margin-top:12px">
+        <div class="field" style="margin-bottom:10px">
+          <span class="dot" style="background:var(--sky)"></span>
+          <input id="myName" maxlength="14" placeholder="ชื่อของหนู" aria-label="ชื่อผู้เล่นของคุณ">
+        </div>
+        <div class="online-row">
+          <div class="obox">
+            <h3>🎪 สร้างห้องใหม่</h3>
+            <p class="note" style="margin:0 0 9px">เลือกภาษากับด่านข้างล่างก่อน แล้วกดสร้างห้อง จะได้รหัส 4 หลักไปบอกเพื่อน</p>
+            <button class="btn mint wide" id="btnCreate" type="button">สร้างห้อง</button>
+          </div>
+          <div class="obox">
+            <h3>🚪 เข้าห้องเพื่อน</h3>
+            <input class="codein" id="joinCode" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="รหัสห้อง 4 หลัก">
+            <button class="btn wide" id="btnJoin" type="button">เข้าห้อง</button>
+          </div>
+        </div>
+        <p class="note">ทุกคนเห็นการ์ดพลิกพร้อมกันจริง ๆ ผลัดกันเล่นทีละคน · เล่นได้สูงสุด 6 คน · ไม่ต้องสมัครอะไรเลย</p>
+      </div>
+    </section>
+
+    <section class="panel" id="stagePanel">
+      <h2><i>3</i> เลือกด่าน</h2>
+      <div class="stages" id="stages"></div>
+      <p class="note" id="stageNote"></p>
+    </section>
+
+    <button class="btn pink big" id="go" type="button">▶️ เริ่มเล่น</button>
+
+    <section class="panel legend" style="margin-top:14px">
+      <h2 style="margin-bottom:8px">ระดับของการ์ดแต่ละใบ</h2>
+      <ul id="legend"></ul>
+      <p class="note">ด้านหลังการ์ดมีดาวบอกไว้ว่าใบนั้นยากแค่ไหน · จับคู่ข้อยากได้คะแนนเยอะกว่า</p>
+    </section>
+  </div>
+
+  <!-- ========== ห้องรอ ========== -->
+  <div id="lobby" hidden>
+    <section class="panel" style="text-align:center">
+      <p class="note" style="margin:0">รหัสห้องของเรา — บอกเพื่อนให้พิมพ์รหัสนี้</p>
+      <div class="bigcode" id="lobbyCode">0000</div>
+      <div class="linkrow" style="justify-content:center">
+        <input id="lobbyLink" readonly aria-label="ลิงก์ชวนเพื่อน">
+        <button class="btn ghost" id="btnCopy" type="button">📋 คัดลอกลิงก์</button>
+      </div>
+      <div class="lobby-players" id="lobbyPlayers"></div>
+      <p class="note" id="lobbyNote">กำลังรอเพื่อน<span class="dots"></span></p>
+      <div class="row" style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:6px">
+        <button class="btn pink" id="btnStart" type="button" hidden>🎬 เริ่มเกม</button>
+        <button class="btn ghost" id="btnLeave" type="button">← ออกจากห้อง</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========== หน้าเล่น ========== -->
+  <div id="play" hidden>
+    <div class="topbar">
+      <button class="btn ghost" id="back" type="button">← ออก</button>
+      <div class="crumb" id="crumb">ด่าน 1</div>
+      <span class="tagline" id="tagLang">ไทย</span>
+      <span class="tagline" id="tagRoom" hidden>ห้อง 0000</span>
+      <span class="grow"></span>
+      <button class="btn ghost" id="btnSound" type="button" aria-pressed="true">🔊</button>
+      <button class="btn ghost" id="btnHint" type="button">💡 <span id="hintN">3</span></button>
+      <button class="btn pink" id="btnNew" type="button">🔄</button>
+    </div>
+
+    <div class="players" id="players" hidden></div>
+
+    <div class="stats" id="stats">
+      <div class="stat"><b id="sScore">0</b><small>คะแนน</small></div>
+      <div class="stat"><b id="sPairs">0/8</b><small>จับคู่ได้</small></div>
+      <div class="stat"><b id="sMoves">0</b><small>เปิดไปกี่ครั้ง</small></div>
+      <div class="stat"><b id="sTime">0:00</b><small>เวลา</small></div>
+    </div>
+
+    <div class="say"><span class="bubble" id="msg">เริ่มได้เลย!</span></div>
+    <div class="board" id="board"></div>
+  </div>
+</div>
+
+<div class="overlay" id="win" hidden>
+  <div class="modal">
+    <div class="bigstars" id="wStars" hidden>⭐⭐⭐</div>
+    <h2 id="wTitle">เก่งมาก!</h2>
+    <p id="wSub">จับคู่ครบทุกใบแล้ว</p>
+    <div class="podium" id="wPodium" hidden></div>
+    <div class="scorebox" id="wBox">
+      <div><b id="wScore">0</b><small>คะแนน</small></div>
+      <div><b id="wMoves">0</b><small>เปิดการ์ด</small></div>
+      <div><b id="wTime">0:00</b><small>เวลา</small></div>
+    </div>
+    <div class="row">
+      <button class="btn pink" id="wAgain" type="button">🔄 เล่นอีกครั้ง</button>
+      <button class="btn" id="wNext" type="button" hidden>➡️ ด่านถัดไป</button>
+      <button class="btn ghost" id="wHome" type="button">🏠 หน้าแรก</button>
+    </div>
+    <p class="note" id="wWait" hidden>รอเจ้าของห้องเริ่มรอบใหม่<span class="dots"></span></p>
+    <div class="best" id="wBest" hidden>🏆 สถิติใหม่ของด่านนี้!</div>
+  </div>
+</div>
+<canvas id="confetti" hidden></canvas>
+
+<script src="game.js"></script>
+</body>
+</html>
